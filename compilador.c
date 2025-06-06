@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 
-//função para ler cada linha separadamente
+//Função para ler cada linha separadamente
 int le(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]){
     FILE *arq = fopen(arquivo, "r");
 
@@ -24,13 +24,13 @@ int le(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]){
     return i;
 }
 
-//remover virgular
+//Remover virgulas de um token
 void removerVir(char *token){
     char *virgula = strchr(token, ',');
     if (virgula) *virgula = '\0';
 }
 
-//analises e transformações token
+//Analisa transofrma em token a linha
 void analisarLin(char *linha, AnL *resultado){
     char copia[TAM_TOKEN * MAX_TOKEN];
     strncpy(copia, linha, sizeof(copia));
@@ -56,7 +56,7 @@ void analisarLin(char *linha, AnL *resultado){
     resultado -> qtd_op = i;
 }
 
-//tabela de instrução - 02;
+//Tabela de instrução - 02;
 Instrucao tabela[MAX_INSTRU] = {
     {"sub",  R_TYPE, "0110011", "000", "0100000"},
     {"or",   R_TYPE, "0110011", "110", "0000000"},
@@ -74,14 +74,12 @@ Instrucao *buscar_instrucao(char *nome){
             return &tabela[i];
         }
     }
-
     return NULL;
 }
 
 
-// extrair o registrador
+//Extrair o numero do registrador
 int registrador_int(char *reg){
-    printf("Registrador recebido: '%s'\n", reg);
     if(reg[0] != 'x'){
         return -1;
     }
@@ -89,7 +87,7 @@ int registrador_int(char *reg){
     return atoi(&reg[1]);
 }
 
-//converter int para bin
+//Converter inteiro para string binário
 void int_bin(int valor, int bits, char *destino){
     for(int i = bits - 1; i >= 0; i--){
         destino[bits - 1 - i] = ((valor >> i) & 1) + '0';
@@ -97,6 +95,7 @@ void int_bin(int valor, int bits, char *destino){
     destino[bits] = '\0';
 }
 
+//Monta a instrução em binario
 int montar(AnL *linha, Instrucao *inst, char *saida_bin){
     if(inst -> tipo == R_TYPE && linha -> qtd_op == 3){
         int rd = registrador_int(linha -> operandos[0]);

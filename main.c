@@ -1,52 +1,72 @@
 #include <stdio.h>
-#include "compilador.c"
+#include "compilador.h"
 
 
-int main(){
+int main(int argc, char *argv[]){
+   if(argc < 2 || argc == 3 || argc > 4){
+        fprintf(stderr, "Uso: %s <arquivo_entrada.asm> [-o <arquivo_saida>]\n", argv[0]);
+        return 1;
+   } 
+
+    char *inputFile = argv[1];
+    char *outputFile = NULL;
+    FILE *outputStream = stdout;
+
+    if(argc == 4){
+        if(strcmp(argv[2], "-o") == 0){
+            outputFile = argv[3];
+            outputStream = fopen(outputFile, "w");
+            if(outputStream == NULL){
+                perror("Erro ao abrir arquivo de saida");
+                return 1;
+            }
+        }
+        else{
+            fprintf(stderr, "Uso: %s <arquivo_entrada.asm> [-o <arquivo_saida]\n", argv[0]);
+            return 1;
+        }
+    }
+
     char linha[MAX_LINHAS][TAM_LINHAS];
+    int num_linhas = le(inputFile, linha);
 
-   
-
-    int ler = le("entrada.asm", linha);
-
-    if(ler == NULL){
-        printf("Erro ao abrir o arquivo.\n");
+    if(num_linhas == 0){
+        if(outputStream != stdout){
+            fclose(outputStream);
+        }
         return 1;
     }
    
-    for (int i = 0; i < ler; i++) {
-        AnL resultado;
+    for (int i = 0; i < num_linhas; i++) {
+        if(linha[i][0] == '\0' || linha[i][0] == '#'){
+            continue;
+        }
+
+        AnL resultado = {0};
         analisarLin(linha[i], &resultado);
 
-        printf("Linha %d: %s\n", i + 1, linha[i]);
-        printf("Instrução: %s | Operandos: ", resultado.instrucao);
-        for (int j = 0; j < resultado.qtd_op; j++) {
-            printf("%s ", resultado.operandos[j]);
+        if(resultado.instrucao[0] == '\0'){
+            continue; // Linha vazia ou sem instrução
         }
-        printf("\n");
 
         Instrucao* inst = buscar_instrucao(resultado.instrucao);
         if (inst) {
-            printf("-> Tipo: %d | Opcode: %s | Funct3: %s | Funct7: %s\n",
-                inst->tipo, inst->opcode, inst->funct3,
-                inst->tipo == R_TYPE ? inst->funct7 : "-");
-            
             char binario[33];
             if(montar(&resultado, inst, binario)){
-                printf("-> Código binário: %s\n\n", binario);
+                fprintf(outputStream, "%s\n", binario);
             } 
             else {
-                printf("-> Erro ao montar instrução!\n\n");
+                fprintf(stderr, "Erro de sintaxe na linha %d: %s\n", i+1, linha[i]);
             }
         } else {
-            printf("-> Instrução desconhecida!\n\n");
+            fprintf(stderr, "-> Instrução desconhecida na linha %d: %s!\n", i+1, resultado.instrucao);
         }
-
-        
-
     }
 
-
-
-    return 0;
+    if(outputStream != stdout) {
+            fclose(outputStream);
+            printf("Codigo binario salvo em %s\n", outputFile);
+        }
+    
+        return 0;
 }
