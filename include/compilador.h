@@ -12,7 +12,7 @@
 #define TAM_TOKEN 20
 
 //Definir o maximo de instruçoes
-#define MAX_INSTRU 7
+#define MAX_INSTRU 40
 
 //Estrutura para analisar
 typedef struct{
@@ -24,7 +24,7 @@ typedef struct{
 
 //Enum para os tipos
 typedef enum{
-    R_TYPE, S_TYPE, SB_TYPE, I_TYPE, UNKNOWN_TYPE
+    R_TYPE, S_TYPE, SB_TYPE, I_TYPE, U_TYPE, UJ_TYPE, UNKNOWN_TYPE
 }TipoIns;
 
 //Estrutura das instruções
@@ -50,6 +50,10 @@ void analisarLin(char *linha, AnL *resultado);
 
 //Função para saber a instrução respectiva: lh sh sub or andi srl beq
 Instrucao *buscar_instrucao(char *nome);
+
+int registrador_int(char *reg);
+
+void int_bin(int valor, int bits, char *destino);
 
 //Função do montador
 int montar(AnL *linha, Instrucao *inst, char *saida_binaria);

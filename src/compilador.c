@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 //Função para ler cada linha separadamente
-int le(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]){
+int ler(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]){
     FILE *arq = fopen(arquivo, "r");
 
      if(arq == NULL){
@@ -58,13 +58,44 @@ void analisarLin(char *linha, AnL *resultado){
 
 //Tabela de instrução - 02;
 Instrucao tabela[MAX_INSTRU] = {
+    {"add",  R_TYPE, "0110011", "000", "0000000"},
     {"sub",  R_TYPE, "0110011", "000", "0100000"},
-    {"or",   R_TYPE, "0110011", "110", "0000000"},
+    {"sll",  R_TYPE, "0110011", "001", "0000000"},
+    {"xor",  R_TYPE, "0110011", "100", "0000000"},
     {"srl",  R_TYPE, "0110011", "101", "0000000"},
-    {"lh",   I_TYPE, "0000011", "001", ""},
-    {"andi", I_TYPE, "0010011", "000", ""},
-    {"sh",   S_TYPE, "0100011", "001", ""},
+    {"sra",  R_TYPE, "0110011", "101", "0000000"},
+    {"or",   R_TYPE, "0110011", "110", "0000000"},
+    {"and",  R_TYPE, "0110011", "111", "0000000"},
+    {"lr.d",  R_TYPE, "0110011", "011", "0001000"},
+    {"sc.d",  R_TYPE, "0110011", "111", "0001100"},
+    {"sb",  S_TYPE, "0100011", "000", ""},
+    {"sh",  S_TYPE, "0100011", "001", ""},
+    {"sw",  S_TYPE, "0100011", "010", ""},
+    {"sd",  S_TYPE, "0100011", "111", ""},
     {"beq",  SB_TYPE, "1100111", "000", ""},
+    {"bne",  SB_TYPE, "1100111", "010", ""},
+    {"blt",  SB_TYPE, "1100111", "100", ""},
+    {"bge",  SB_TYPE, "1100111", "101", ""},
+    {"bltu",  SB_TYPE, "1100111", "110", ""},
+    {"bgeu",  SB_TYPE, "1100111", "111", ""},
+    {"lui",  U_TYPE, "0110011", "", ""},
+    {"jal",  UJ_TYPE, "0110011", "", ""},
+    {"lb",  I_TYPE, "0000011", "000", ""},
+    {"lh",  I_TYPE, "0000011", "001", ""},
+    {"lw",  I_TYPE, "0000011", "010", ""},
+    {"ld",  I_TYPE, "0000011", "011", ""},
+    {"lbu",  I_TYPE, "0000011", "100", ""},
+    {"lhu",  I_TYPE, "0000011", "101", ""},
+    {"lwu",  I_TYPE, "0000011", "110", ""},
+    {"addi",  I_TYPE, "0010011", "000", ""},
+    {"slli",  I_TYPE, "0010011", "001", "000000"},
+    {"xori",  I_TYPE, "0010011", "100", ""},
+    {"srli",  I_TYPE, "0010011", "101", "000000"},
+    {"srai",  I_TYPE, "0010011", "101", "010000"},
+    {"ori",  I_TYPE, "0010011", "110", ""},
+    {"andi",  I_TYPE, "0010011", "111", ""},
+    {"jalr",  I_TYPE, "1100111", "000", ""},
+
 };
 
 //Descobrir a instrução e as funct
@@ -97,6 +128,8 @@ void int_bin(int valor, int bits, char *destino){
 
 //Monta a instrução em binario
 int montar(AnL *linha, Instrucao *inst, char *saida_bin){
+    char *endptr;
+
     if(inst -> tipo == R_TYPE && linha -> qtd_op == 3){
         int rd = registrador_int(linha -> operandos[0]);
         int rs1 = registrador_int(linha -> operandos[1]);
@@ -119,7 +152,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
     else if(inst -> tipo == I_TYPE && linha -> qtd_op == 3){
         int rd = registrador_int(linha -> operandos[0]);
         int rs1 = registrador_int(linha -> operandos[1]);
-        int imm = atoi(linha -> operandos[2]);
+        long imm = strtol(linha -> operandos[2], &endptr, 0);
 
         if (rd < 0 || rs1 < 0){
             return 0;
@@ -141,7 +174,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
     else if(inst -> tipo == SB_TYPE && linha -> qtd_op == 3){
         int rs1 = registrador_int(linha -> operandos[0]);
         int rs2 = registrador_int(linha -> operandos[1]);
-        int imm = atoi(linha -> operandos[2]);
+        long imm = strtol(linha -> operandos[2], &endptr, 0);
 
         if (rs1 < 0 || rs2 < 0){
             return 0;
@@ -170,7 +203,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
     else if (inst -> tipo == S_TYPE && linha -> qtd_op == 3){
         int rs1 = registrador_int(linha -> operandos[0]);
         int rs2 = registrador_int(linha -> operandos[1]);
-        int imm = atoi(linha -> operandos[2]);
+        long imm = strtol(linha -> operandos[2], &endptr, 0);
 
         if (rs1 < 0 || rs2 < 0){
             return 0;

@@ -28,7 +28,7 @@ int main(int argc, char *argv[]){
     }
 
     char linha[MAX_LINHAS][TAM_LINHAS];
-    int num_linhas = le(inputFile, linha);
+    int num_linhas = ler(inputFile, linha);
 
     if(num_linhas == 0){
         if(outputStream != stdout){
