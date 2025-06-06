@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]){
    if(argc < 2 || argc == 3 || argc > 4){
-        fprintf(stderr, "Uso: %s <arquivo_entrada.asm> [-o <arquivo_saida>]\n", argv[0]);
+        fprintf(stderr, "Use: %s <arquivo_entrada.asm> [-o <arquivo_saida>]\n", argv[0]);
         return 1;
    } 
 

@@ -1,39 +1,44 @@
-# Define o compilador a ser usado (GNU C Compiler)
+# Define o compilador
 CC = gcc
 
-# Define as flags de compilação:
-# -Wall: Habilita todos os avisos do compilador
-# -g: Inclui informações de depuração no executável
-CFLAGS = -Wall -g
+# Adiciona -Iinclude para que o compilador encontre os headers na pasta include/
+CFLAGS = -Wall -g -Iinclude
 
-# Define o nome do arquivo executável final
-TARGET = montador
+# Define os diretórios
+SRCDIR = src
+OBJDIR = obj
+OUTDIR = out
 
-# Lista todos os arquivos de código-fonte (.c)
-SRCS = main.c compilador.c
+# Define o alvo final, agora dentro da pasta de objetos
+TARGET = $(OBJDIR)/montador
 
-# Gera automaticamente a lista de arquivos objeto (.o) a partir da lista de fontes
-OBJS = $(SRCS:.c=.o)
+# Encontra todos os arquivos .c no diretório de fontes
+SRCS = $(wildcard $(SRCDIR)/*.c)
 
-# A primeira regra é a padrão, que será executada ao rodar "make"
-# Depende do executável final (TARGET)
+# Gera os nomes dos arquivos objeto, colocando-os no diretório de objetos
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+
+# Regra padrão: compila o alvo principal
 all: $(TARGET)
 
-# Regra para linkar os arquivos objeto e criar o executável final
-# Depende de todos os arquivos objeto (.o)
+# Regra para criar o executável final
 $(TARGET): $(OBJS)
+	@mkdir -p $(OBJDIR) # Garante que o diretório de destino do executável existe
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-# Regra de padrão para compilar arquivos .c em arquivos .o
-# Diz ao 'make' como criar um arquivo .o a partir de um .c
-# Depende do arquivo .c correspondente e do cabeçalho compilador.h
-%.o: %.c compilador.h
+# Regra para compilar os arquivos objeto .o
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Regra "clean" para limpar os arquivos gerados pela compilação
-# Remove o executável e todos os arquivos objeto
-clean:
-	rm -f $(TARGET) $(OBJS)
+# Nova regra para executar o programa com os parâmetros corretos
+run: all
+	./$(TARGET) examples/entrada.asm -o $(OUTDIR)/saida.bin
+	@echo "Execucao concluida. 'saida.bin' gerado em $(OUTDIR)/"
 
-# Declara que "all" e "clean" não são nomes de arquivos
-.PHONY: all clean
+# Regra para limpar os arquivos gerados
+clean:
+	rm -rf $(OBJDIR)
+
+# Declara as regras que não são nomes de arquivos
+.PHONY: all clean run
