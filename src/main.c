@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "compilador.h"
+#include "pseudo_instruction.h"
 
 
 int main(int argc, char *argv[]){
@@ -49,17 +50,23 @@ int main(int argc, char *argv[]){
             continue; // Linha vazia ou sem instrução
         }
 
-        Instrucao* inst = buscar_instrucao(resultado.instrucao);
-        if (inst) {
-            char binario[33];
-            if(montar(&resultado, inst, binario)){
-                fprintf(outputStream, "%s\n", binario);
-            } 
-            else {
-                fprintf(stderr, "Erro de sintaxe na linha %d: %s\n", i+1, linha[i]);
+        ExpansaoResultado expansao = expandirLinha(&resultado);
+
+         for (int j = 0; j < expansao.count; j++) {
+            AnL* resultado_final = &expansao.instrucoes[j];
+
+            Instrucao* inst = buscar_instrucao(resultado_final->instrucao);
+            if (inst) {
+                char binario[33];
+                if(montar(resultado_final, inst, binario)){
+                    fprintf(outputStream, "%s\n", binario);
+                } 
+                else {
+                    fprintf(stderr, "Erro de sintaxe na linha %d (expansao %d): %s\n", i+1, j+1, linha[i]);
+                }
+            } else {
+                fprintf(stderr, "-> Instrução desconhecida na linha %d: %s!\n", i+1, resultado_final->instrucao);
             }
-        } else {
-            fprintf(stderr, "-> Instrução desconhecida na linha %d: %s!\n", i+1, resultado.instrucao);
         }
     }
 

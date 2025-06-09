@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "pseudo_instruction.h": "c",
+        "string.h": "c"
+    }
+}

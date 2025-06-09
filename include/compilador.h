@@ -24,7 +24,7 @@ typedef struct{
 
 //Enum para os tipos
 typedef enum{
-    R_TYPE, S_TYPE, SB_TYPE, I_TYPE, U_TYPE, UJ_TYPE, UNKNOWN_TYPE
+    R_TYPE, S_TYPE, B_TYPE, I_TYPE, U_TYPE, UJ_TYPE, PS_TYPE
 }TipoIns;
 
 //Estrutura das instruções
@@ -36,7 +36,7 @@ typedef struct{
     char funct7[8]; // Para tipos R, e alguns I
 } Instrucao;
 
-
+extern Instrucao tabela[MAX_INSTRU];
 
 //Função para ler cada linha separadamente do arquivo de entrada
 int ler(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]);
@@ -58,5 +58,4 @@ void int_bin(int valor, int bits, char *destino);
 //Função do montador
 int montar(AnL *linha, Instrucao *inst, char *saida_binaria);
 
-#endif COMPILADOR_H
-
+#endif
