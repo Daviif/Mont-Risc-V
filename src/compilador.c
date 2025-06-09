@@ -72,7 +72,7 @@ Instrucao tabela[MAX_INSTRU] = {
     {"sh",  S_TYPE, "0100011", "001", ""},
     {"sw",  S_TYPE, "0100011", "010", ""},
     {"sd",  S_TYPE, "0100011", "111", ""},
-    {"beq",  SB_TYPE, "1100111", "000", ""},
+    {"beq",  SB_TYPE, "1100011", "000", ""},
     {"bne",  SB_TYPE, "1100111", "010", ""},
     {"blt",  SB_TYPE, "1100111", "100", ""},
     {"bge",  SB_TYPE, "1100111", "101", ""},
@@ -209,8 +209,8 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
             return 0;
         }
 
-        char imm_bin[15];
-        int_bin(imm, 14, imm_bin);
+        char imm_bin[14];
+        int_bin(imm, 13, imm_bin);
 
         char imm_11_5[8], imm_4_0[6];
         strncpy(imm_11_5, imm_bin, 7);
@@ -226,6 +226,9 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
             imm_11_5, rs2_bin, rs1_bin, inst->funct3, imm_4_0, inst->opcode);
             
         return 1;
+    }
+    else{
+        return 0; // Instrução não reconhecida ou número de operandos inválido
     }
     
 }
