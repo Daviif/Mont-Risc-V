@@ -32,7 +32,7 @@ void removerVir(char *token){
 
 //Analisa transofrma em token a linha
 void analisarLin(char *linha, AnL *resultado){
-    char copia[TAM_TOKEN * MAX_TOKEN];
+    char copia[TAM_LINHAS];
     strncpy(copia, linha, sizeof(copia));
     copia[sizeof(copia) - 1] = '\0';
 
@@ -41,6 +41,32 @@ void analisarLin(char *linha, AnL *resultado){
 
     strncpy(resultado -> instrucao, token, TAM_TOKEN);
 
+    char *paren_inicio = strchr(resultado -> instrucao, '(');
+    if(paren_inicio){
+        token = strtok(NULL, ",");
+        if (token){
+            while(isspace(*token)){
+                token++;
+            }
+            strncpy(resultado -> operandos[0], token, TAM_TOKEN);
+        }
+        token = strtok(NULL, "(");
+        if (token){
+            while(isspace(*token)){
+                token++;
+            }
+            strncpy(resultado -> operandos[2], token, TAM_TOKEN);
+        }
+        token = strtok(NULL, ")");
+        if (token){
+            while(isspace(*token)){
+                token++;
+            }
+            strncpy(resultado -> operandos[1], token, TAM_TOKEN);
+        }
+        resultado -> qtd_op = 3;
+    }
+    else{
     int i = 0;
     while ((token = strtok(NULL, "\t,")) != NULL && i < MAX_TOKEN){
        removerVir(token);
@@ -54,6 +80,7 @@ void analisarLin(char *linha, AnL *resultado){
     }
 
     resultado -> qtd_op = i;
+    }
 }
 
 //Tabela de instrução - 02;
@@ -201,16 +228,16 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
         return 1;
     }
     else if (inst -> tipo == S_TYPE && linha -> qtd_op == 3){
-        int rs1 = registrador_int(linha -> operandos[0]);
-        int rs2 = registrador_int(linha -> operandos[1]);
+        int rs1 = registrador_int(linha -> operandos[1]);
+        int rs2 = registrador_int(linha -> operandos[0]);
         long imm = strtol(linha -> operandos[2], &endptr, 0);
 
         if (rs1 < 0 || rs2 < 0){
             return 0;
         }
 
-        char imm_bin[14];
-        int_bin(imm, 13, imm_bin);
+        char imm_bin[13];
+        int_bin(imm, 12, imm_bin);
 
         char imm_11_5[8], imm_4_0[6];
         strncpy(imm_11_5, imm_bin, 7);
@@ -219,8 +246,8 @@ int montar(AnL *linha, Instrucao *inst, char *saida_bin){
         imm_4_0[5] = '\0';
 
         char rs1_bin[6], rs2_bin[6];
-        int_bin(rs1, 5, rs1_bin);
         int_bin(rs2, 5, rs2_bin);
+        int_bin(rs1, 5, rs1_bin);
 
         snprintf(saida_bin, 33, "%s%s%s%s%s%s",
             imm_11_5, rs2_bin, rs1_bin, inst->funct3, imm_4_0, inst->opcode);
