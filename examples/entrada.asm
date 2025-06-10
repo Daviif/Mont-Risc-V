@@ -1,42 +1,65 @@
-# Arquivo de teste para pseudo-instruções
-# Testa tanto as de 1-para-1 quanto as de 1-para-Muitos.
+# Este código de exemplo demonstra o uso das sete instruções fornecidas.
+# Ele executa operações de memória, aritmética e lógicas, e um desvio condicional.
+#
+# Registradores utilizados:
+# x5, x6: para valores iniciais
+# x7: para carregar valor da memória
+# x8, x9: para resultados de operações
+# x10 (a0): para o valor do shift e para a chamada de sistema (ecall)
+# sp (x2): ponteiro da pilha (stack pointer) para operações de memória
 
-# --- Seção 1: Pseudo-Instruções Simples (1-para-1) ---
+_start:
+    # Prepara alguns valores iniciais nos registradores x5 e x6
+    li x5, 500      # x5 <- 500
+    li x6, 120      # x6 <- 120
 
-# mv deve ser traduzido para -> addi x10, x5, 0
-mv x10, x5
+    # 1. Instrução 'sh' (Store Half)
+    # Armazena os 16 bits inferiores de x6 (valor 120) na memória.
+    # Usamos o ponteiro da pilha (sp) como endereço base.
+    sh x6, -2(sp)
 
-# nop deve ser traduzido para -> addi x0, x0, 0
-nop
+    # 2. Instrução 'lh' (Load Half)
+    # Carrega um valor de 16 bits (half-word) da memória para o registrador x7.
+    # Como acabamos de salvar 120 na posição sp-2, x7 receberá 120.
+    lh x7, -2(sp)   # x7 <- 120 (lido da memória)
 
-# not deve ser traduzido para -> xori x11, x10, -1
-not x11, x10
+    # 3. Instrução 'sub' (Subtract)
+    # Subtrai o valor de x7 (120) de x5 (500) e armazena em x8.
+    # x8 = 500 - 120  =>  x8 <- 380
+    sub x8, x5, x7
 
+    # 4. Instrução 'or' (Bitwise OR)
+    # Realiza um "OU" lógico bit a bit entre x6 e x7 e armazena em x9.
+    # x6 = 120 (01111000)
+    # x7 = 120 (01111000)
+    # x9 = x6 | x7  =>  x9 <- 120
+    or x9, x6, x7
 
-# --- Seção 2: Pseudo-Instruções Complexas (1-para-Muitos) ---
+    # 5. Instrução 'andi' (AND Immediate)
+    # Realiza um "E" lógico bit a bit entre x8 (380) e o valor imediato 255.
+    # x8 = 380 (...0001 0111 1100)
+    # imm = 255 (...0000 1111 1111)
+    # x8 = x8 & 255  =>  x8 <- 124 (...0000 0111 1100)
+    andi x8, x8, 255
 
-# Teste 1: 'li' com um valor pequeno que cabe em 12 bits.
-# Deve ser traduzido para UMA instrução: addi x5, x0, 200
-li x5, 200
+    # 6. Instrução 'srl' (Shift Right Logical)
+    # Desloca os bits de x8 (agora 124) duas posições para a direita.
+    # x8 = 124 (01111100)
+    # x8 >> 2  =>  00011111 (31 em decimal)
+    # Para isso, carregamos o valor 2 em um registrador (x10).
+    li x10, 2
+    srl x8, x8, x10  # x8 <- 31
 
-# Teste 2: 'li' com um valor grande que exige duas instruções.
-# Deve ser traduzido para DUAS instruções:
-# 1. lui x6, 1
-# 2. addi x6, x6, 0 
-# (4096 = 0x1000. upper=1, lower=0)
-li x6, 4096
+    # 7. Instrução 'beq' (Branch if Equal)
+    # Compara o registrador x9 (120) com o x7 (120).
+    # Como eles são iguais, o programa deve pular para a etiqueta 'fim_do_programa'.
+    beq x9, x7, fim_do_programa
 
-# Teste 3: 'li' com um valor de 32 bits mais complexo.
-# O valor é 80000 (0x13880).
-# Deve ser traduzido para DUAS instruções:
-# 1. lui x7, 20 (0x14, pois o bit 11 de 0x880 é 1)
-# 2. addi x7, x7, -1920 (0x880 com sinal estendido)
-li x7, 80000
+    # O código abaixo só seria executado se o desvio 'beq' falhasse (se x9 != x7).
+    # É um caminho alternativo que, neste caso, não será percorrido.
+    li x5, 111 # Instrução de preenchimento
 
-
-# --- Seção 3: Instruções Reais ---
-# Para garantir que o resto do montador continua funcionando.
-
-add x1, x2, x3
-sub x4, x5, x6
-sw x7, 12(x2) # Instrução do seu 'entrada.asm' original
+fim_do_programa:
+    # Finaliza a execução do programa de forma limpa, como visto em 'entrada.asm'.
+    li x10, 93      # Carrega o código de 'exit' (93) no registrador de argumento x10 (a0)
+    ecall           # Faz a chamada ao sistema para encerrar o programa

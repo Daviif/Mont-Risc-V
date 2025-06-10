@@ -1,7 +1,8 @@
 #ifndef PSEUDO_INSTRUCTION_H
 #define PSEUDO_INSTRUCTION_H
 
-#include "compilador.h"
+#include "leitura.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,5 +1,5 @@
 # Ignorar a pasta de objetos
 obj/
 
-# Ignorar o executável final
-montador
+# Ignorar os arquivos de saída do compilador
+out/
