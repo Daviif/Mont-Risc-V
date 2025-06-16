@@ -46,6 +46,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_binaria, int endereco_atual,
         char rd_bin[6], rs1_bin[6], rs2_bin[6];
         int_bin(rd, 5, rd_bin); int_bin(rs1, 5, rs1_bin); int_bin(rs2, 5, rs2_bin);
 
+        // O formato é: funct7 | rs2 | rs1 | funct3 | rd | opcode
         snprintf(saida_binaria, 33, "%s%s%s%s%s%s", inst->funct7, rs2_bin, rs1_bin, inst->funct3, rd_bin, inst->opcode);
         return 1;
     } 
@@ -58,6 +59,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_binaria, int endereco_atual,
         char rd_bin[6], rs1_bin[6], imm_bin[13];
         int_bin(rd, 5, rd_bin); int_bin(rs1, 5, rs1_bin); int_bin(imm, 12, imm_bin);
 
+        // O formato é: imm | rs1 | funct3 | rd | opcode
         snprintf(saida_binaria, 33, "%s%s%s%s%s", imm_bin, rs1_bin, inst->funct3, rd_bin, inst->opcode);
         return 1;
     } 
@@ -76,6 +78,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_binaria, int endereco_atual,
         char rs1_bin[6], rs2_bin[6];
         int_bin(rs1, 5, rs1_bin); int_bin(rs2, 5, rs2_bin);
 
+        // O formato é: imm_11_5 | rs2 | rs1 | funct3 | imm_4_0 | opcode
         snprintf(saida_binaria, 33, "%s%s%s%s%s%s", imm_11_5, rs2_bin, rs1_bin, inst->funct3, imm_4_0, inst->opcode);
         return 1;
     }
@@ -105,6 +108,7 @@ int montar(AnL *linha, Instrucao *inst, char *saida_binaria, int endereco_atual,
         char rs1_bin[6], rs2_bin[6];
         int_bin(rs1, 5, rs1_bin); int_bin(rs2, 5, rs2_bin);
 
+        // O formato é: imm12 | imm10_5 | rs2 | rs1 | func3 | imm4_1 | imm11 | opcode
         snprintf(saida_binaria, 33, "%c%s%s%s%s%s%c%s", imm12, imm10_5, rs2_bin, rs1_bin, inst->funct3, imm4_1, imm11, inst->opcode);
         return 1;
     }
@@ -145,10 +149,10 @@ int montar(AnL *linha, Instrucao *inst, char *saida_binaria, int endereco_atual,
         char rd_bin[6];
         int_bin(rd, 5, rd_bin);
         
+        //O formato é: imm20 | imm10_1 | imm11 | imm19_12 | rd | opcode
         snprintf(saida_binaria, 33, "%c%s%c%s%s%s", imm20, imm10_1, imm11, imm19_12, rd_bin, inst->opcode);
         return 1;
     }
-    // ADICIONE ESTE BLOCO
     else if (inst->tipo == SYS_TYPE && linha->qtd_op == 0) {
         // Para ecall e ebreak
         // O formato é: funct12 | x0 | funct3 | x0 | opcode

@@ -17,6 +17,6 @@ int ler(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]);
 
 void analisarLin(char *linha, AnL *resultado);
 
-char *trim_whitespace(char *str);
+char *tirar_espaco(char *str);
 
 #endif

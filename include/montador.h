@@ -3,7 +3,7 @@
 
 #include "leitura.h"
 #include "tabela_instrucoes.h"
-#include "tabela_simbolos.h"
+#include "labels.h"
 
 typedef struct{
     char *nome;

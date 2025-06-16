@@ -5,7 +5,7 @@
 #include "leitura.h"
 #include "tabela_instrucoes.h"
 #include "montador.h"
-#include "tabela_simbolos.h"
+#include "labels.h"
 #include "pseudo_instruction.h"
 
 int main(int argc, char *argv[]) {
@@ -50,20 +50,16 @@ int main(int argc, char *argv[]) {
         strcpy(linha_original, linhas[i]);
         
         char* instrucao_inicio = linha_original;
-
-        // -------------------------------------------------------------------
-        // LÓGICA CORRIGIDA PARA PROCESSAR RÓTULOS E COMENTÁRIOS
-        // -------------------------------------------------------------------
-        char* comment_ptr = strchr(instrucao_inicio, '#');
+        
+        char* comentario_ptr = strchr(instrucao_inicio, '#');
         char* colon_ptr = strchr(instrucao_inicio, ':');
 
         // Um ':' só é um rótulo se ele existir E vier ANTES de um '#' (ou se não houver '#')
-        if (colon_ptr != NULL && (comment_ptr == NULL || colon_ptr < comment_ptr)) {
+        if (colon_ptr != NULL && (comentario_ptr == NULL || colon_ptr < comentario_ptr)) {
             instrucao_inicio = colon_ptr + 1;
         }
-        // -------------------------------------------------------------------
 
-        char *linha_atual = trim_whitespace(instrucao_inicio);
+        char *linha_atual = tirar_espaco(instrucao_inicio);
         
         if (linha_atual[0] == '\0' || linha_atual[0] == '#') {
             continue; 

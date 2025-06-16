@@ -16,7 +16,7 @@ TARGET = $(OBJDIR)/montador
 SRCS = $(SRCDIR)/main.c \
        $(SRCDIR)/leitura.c \
        $(SRCDIR)/tabela_instrucoes.c \
-       $(SRCDIR)/tabela_simbolos.c \
+       $(SRCDIR)/labels.c \
        $(SRCDIR)/montador.c \
        $(SRCDIR)/pseudo_instruction.c
 
@@ -38,8 +38,6 @@ $(TARGET): $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-
-# REMOVIDA A REGRA ÓRFÃ PARA O DIRETÓRIO 'out'
 
 # Regra para executar e mostrar o resultado NO TERMINAL
 run: all

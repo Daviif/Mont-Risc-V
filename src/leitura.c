@@ -22,9 +22,9 @@ int ler(char *arquivo, char linha[MAX_LINHAS][TAM_LINHAS]){
 void analisarLin(char *linha, AnL *resultado) {
     memset(resultado, 0, sizeof(AnL));
 
-    char *comment = strchr(linha, '#');
-    if (comment) {
-        *comment = '\0';
+    char *comentario = strchr(linha, '#');
+    if (comentario) {
+        *comentario = '\0';
     }
 
     char copia_linha[TAM_LINHAS];
@@ -40,7 +40,7 @@ void analisarLin(char *linha, AnL *resultado) {
         resultado->qtd_op = 0;
         return;
     }
-    resto = trim_whitespace(resto);
+    resto = tirar_espaco(resto);
 
     char* paren_inicio = strchr(resto, '(');
     char* paren_fim = strchr(resto, ')');
@@ -48,13 +48,13 @@ void analisarLin(char *linha, AnL *resultado) {
 
     if (paren_inicio && paren_fim && virgula && virgula < paren_inicio) {
         token = strtok(resto, ",");
-        if(token) strncpy(resultado->operandos[0], trim_whitespace(token), TAM_TOKEN-1);
+        if(token) strncpy(resultado->operandos[0], tirar_espaco(token), TAM_TOKEN-1);
         
         token = strtok(NULL, "(");
-        if(token) strncpy(resultado->operandos[2], trim_whitespace(token), TAM_TOKEN-1); // offset
+        if(token) strncpy(resultado->operandos[2], tirar_espaco(token), TAM_TOKEN-1); // offset
         
         token = strtok(NULL, ")");
-        if(token) strncpy(resultado->operandos[1], trim_whitespace(token), TAM_TOKEN-1); // registrador base
+        if(token) strncpy(resultado->operandos[1], tirar_espaco(token), TAM_TOKEN-1); // registrador base
         
         resultado->qtd_op = 3;
     } else {
@@ -69,7 +69,7 @@ void analisarLin(char *linha, AnL *resultado) {
     }
 }
 
-char *trim_whitespace(char *str) {
+char *tirar_espaco(char *str) {
     if (!str) return str;
     while(isspace((unsigned char)*str)) str++;
     if(*str == 0) return str;

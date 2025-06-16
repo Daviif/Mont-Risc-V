@@ -21,13 +21,4 @@ typedef struct {
 
 ExpansaoResultado expandirLinha(AnL *resultadoAnL);
 
-// Funções "handler" para traduzir pseudo-instruções 1-para-1
-void traduzir_mv(AnL *resultado);
-
-void traduzir_nop(AnL *resultado);
-
-void traduzir_not(AnL *resultado);
-
-
-
-#endif // PSEUDO_INSTRUCTION_H
+#endif
