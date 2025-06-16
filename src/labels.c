@@ -65,5 +65,5 @@ int buscar_endereco_label(char *nome, Label *tabela_simbolos, int num_labels) {
             return tabela_simbolos[i].endereco;
         }
     }
-    return -1; // Rótulo não encontrado
+    return -1;
 }

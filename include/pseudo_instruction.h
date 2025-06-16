@@ -15,7 +15,7 @@ typedef struct{
 } ExpansaoResultado;
 
 typedef struct {
-    const char *nome;
+    char *nome;
     void (*traduzir)(AnL*); // Ponteiro para a função de tradução
 } PseudoTradutor;
 
