@@ -29,7 +29,7 @@ all: $(TARGET)
 # Regra para criar o executável final
 # CRIA O DIRETÓRIO DE SAÍDA AQUI, ANTES DE CRIAR O EXECUTÁVEL
 $(TARGET): $(OBJS)
-	@mkdir -p $(OUTDIR)
+	
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 	@echo "Montador compilado com sucesso em $(TARGET)"
 
@@ -41,16 +41,18 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 # Regra para executar e mostrar o resultado NO TERMINAL
 run: all
-	./$(TARGET) examples/entrada.asm
+	./$(TARGET) entrada02.asm
 
 # Nova regra para testar a gravação em arquivo
 out_file: all
-	./$(TARGET) examples/entrada.asm -o $(OUTDIR)/saida.bin
+	@mkdir -p $(OUTDIR)
+	./$(TARGET) entrada02.asm -o $(OUTDIR)/saida.bin
 	@echo "Execucao concluida. 'saida.bin' gerado em $(OUTDIR)/"
 
 # Regra para limpar os arquivos gerados
 clean:
 	@echo "Limpando arquivos gerados..."
+	rm -f $(TARGET)
 	rm -rf $(OBJDIR)
 	rm -rf $(OUTDIR)
 
